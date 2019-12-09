@@ -1,41 +1,37 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 
 import TodoListContainer from "./TodoListContainer";
 import TodoListHeader from "./TodoListHeader";
 import TagList from "../Tag/TagList";
 import TaskList from "../Task/TaskList";
 
-class TodoList extends Component {
-  render() {
-    return (
-      <TodoListContainer>
-        <TodoListHeader
-          title={this.props.title}
-          editClicked={this.props.editClicked}
-          infoClicked={this.props.infoClicked}
-          crossClicked={() => this.props.crossClicked(this.props.id)}
-        ></TodoListHeader>
+function TodoList(props) {
+  const { id, title, tasks, tags } = props.todoList;
 
-        <TagList
-          style={{ marginBottom: "15px" }}
-          tags={this.props.tags}
-        ></TagList>
+  const [showTaskDetails, setShowTaskDetails] = useState(false);
+  return (
+    <TodoListContainer>
+      <TodoListHeader
+        title={title}
+        onEdit={props.onTodoListEdit}
+        onMoreInfo={() => setShowTaskDetails(!showTaskDetails)}
+        onDelete={() => props.onTodoListDelete && props.onTodoListDelete(id)}
+      ></TodoListHeader>
 
-        <TaskList
-          tasks={this.props.tasks}
-          taskChecked={(taskID, checkValue) =>
-            this.props.taskChecked(this.props.id, taskID, checkValue)
-          }
-          taskDescriptionClicked={this.props.taskDescriptionClicked}
-          wrapEllipsis={true}
-          showTaskDetails={this.props.showTaskDetails}
-          deleteClicked={taskID =>
-            this.props.deleteClicked(this.props.id, taskID)
-          }
-        ></TaskList>
-      </TodoListContainer>
-    );
-  }
+      <TagList tags={tags}></TagList>
+
+      <br></br>
+      <TaskList
+        tasks={tasks}
+        onUpdate={props.onTaskUpdate}
+        onDescriptionClick={props.onTaskDescriptionClicked}
+        showDetails={showTaskDetails}
+        onDelete={taskID =>
+          props.onTaskDelete && props.onTaskDelete(id, taskID)
+        }
+      ></TaskList>
+    </TodoListContainer>
+  );
 }
 
 export default TodoList;

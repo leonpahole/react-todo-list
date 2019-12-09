@@ -1,0 +1,69 @@
+.taskWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.taskLineWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 90%;
+  margin-bottom: 10px;
+}
+
+.taskLine {
+  display: flex;
+  align-items: flex-start;
+}
+
+.checkbox {
+  display: inline-block;
+}
+
+.taskDescription {
+  min-height: 22px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.taskCompleted {
+  text-decoration: line-through;
+}
+
+.reminderActive {
+  color: red;
+}
+
+.reminderText {
+  font-style: italic;
+  display: inline-block;
+  margin-left: 15px;
+}
+
+.editDeadlineReminderWrapper {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.editDeadlineReminderText {
+  margin: 0;
+  margin-right: 10px;
+}
+
+.editDeadlineReminderInput {
+  border: none;
+  border-bottom: 1px solid var(--secondary-color);
+  width: 100%;
+}
+
+.detailsRow {
+  color: var(--primary-color);
+  display: block;
+}
+
+.tagListWrapper {
+  margin-top: 5px;
+}

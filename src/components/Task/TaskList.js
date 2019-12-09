@@ -1,34 +1,42 @@
-import React, { Component } from "react";
+import React from "react";
+
 import Task from "./Task";
 
-class TaskList extends Component {
-  render() {
-    if (this.props.tasks == null || this.props.tasks.length === 0) {
-      return <span>No tasks yet.</span>;
-    }
+import commonStyles from "../../styles/common.module.css";
 
-    return (
-      <div style={this.props.style || {}}>
-        {this.props.tasks.map(task => (
-          <Task
-            key={task.id}
-            id={task.id}
-            deadline={task.deadline}
-            description={task.description}
-            reminder={task.reminder}
-            createdAt={task.createdAt}
-            state={task.state}
-            tags={task.tags}
-            taskChecked={this.props.taskChecked}
-            taskDescriptionClicked={this.props.taskDescriptionClicked}
-            wrapEllipsis={this.props.wrapEllipsis}
-            showTaskDetails={this.props.showTaskDetails}
-            deleteClicked={this.props.deleteClicked}
-          ></Task>
-        ))}
-      </div>
-    );
+function TaskList(props) {
+  if (props.tasks == null || props.tasks.length === 0) {
+    return <div className={commonStyles.italic}>No tasks yet.</div>;
   }
+
+  let classes = [];
+
+  if (props.className) {
+    classes.push(props.className);
+  }
+
+  return (
+    <div className={classes.join(" ")}>
+      {props.tasks.map(task => (
+        <Task
+          key={task.id}
+          task={task}
+          showDetails={props.showDetails}
+          onDescriptionClick={props.onDescriptionClick}
+          onDelete={() => props.onDelete && props.onDelete(task.id)}
+          allTags={props.allTags}
+          onUpdate={updateInfo =>
+            props.onUpdate && props.onUpdate(task.id, updateInfo)
+          }
+          onTagToggle={(tag, selected) =>
+            props.onTagToggle && props.onTagToggle(task.id, tag, selected)
+          }
+          onTagAdd={tag => props.onTagAdd && props.onTagAdd(task.id, tag)}
+          isEditable={props.isEditable}
+        ></Task>
+      ))}
+    </div>
+  );
 }
 
 export default TaskList;

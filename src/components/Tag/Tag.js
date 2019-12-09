@@ -1,23 +1,13 @@
-import React, { Component } from "react";
+import React from "react";
+import tagStyles from "../../styles/tags.module.css";
 
-class Tag extends Component {
-  render() {
-    return (
-      <span
-        style={{
-          backgroundColor: "red",
-          color: "white",
-          padding: "5px",
-          display: "inline-block",
-          fontWeight: "bold",
-          fontSize: "11pt",
-          ...this.props.style
-        }}
-      >
-        {this.props.title}
-      </span>
-    );
+function Tag(props) {
+  let classes = [tagStyles.tag];
+  if (props.classes) {
+    classes = classes.concat(props.classes);
   }
+
+  return <span className={classes.join(" ")}>{props.title}</span>;
 }
 
 export default Tag;

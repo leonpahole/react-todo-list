@@ -1,101 +1,127 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import Modal from "react-modal";
 
 import TodoListModal from "../components/TodoList/TodoListModal";
 import TodoList from "../components/TodoList/TodoList";
 
-class TodoListUnit extends Component {
-  constructor() {
-    super();
+import {
+  DELETE_TASK_IN_TODO_LIST,
+  UPDATE_TASK,
+  UPDATE_TODO_LIST,
+  ADD_TAG_TO_TODO_LIST,
+  ADD_TAG_TO_TASK,
+  REMOVE_TAG_FROM_TASK,
+  REMOVE_TAG_FROM_TODO_LIST,
+  CREATE_TASK,
+  CREATE_AND_ADD_TAG_TO_TASK,
+  CREATE_AND_ADD_TAG_TO_TODO_LIST
+} from "../graphql/mutations";
+import { useMutation } from "urql";
 
-    this.state = {
-      modalIsOpen: false,
-      addTaskInputText: "",
-      showTaskDetails: false
-    };
+function useMutationCallback(query) {
+  const [, mutation] = useMutation(query);
 
-    this.openModal = this.openModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
-    this.taskChecked = this.taskChecked.bind(this);
-    this.addTaskInputOnChange = this.addTaskInputOnChange.bind(this);
-    this.taskDescriptionClicked = this.taskDescriptionClicked.bind(this);
-    this.toggleTaskDetails = this.toggleTaskDetails.bind(this);
+  const action = React.useCallback(
+    (...args) => {
+      mutation(...args);
+    },
+    [mutation]
+  );
 
-    Modal.setAppElement("#root");
-  }
+  return [action];
+}
 
-  taskChecked(checkedTaskInfo) {
-    this.props.taskChecked({
-      todoListID: this.props.id,
-      ...checkedTaskInfo
-    });
-  }
+Modal.setAppElement("#root");
 
-  taskDescriptionClicked() {
-    this.openModal();
-  }
+function TodoListUnit(props) {
+  const [modalOpen, setModalOpen] = useState(false);
 
-  toggleTaskDetails() {
-    this.setState({
-      showTaskDetails: !this.state.showTaskDetails
-    });
-  }
+  const openModal = () => {
+    setModalOpen(true);
+  };
 
-  openModal() {
-    this.setState({ modalIsOpen: true });
-  }
+  const closeModal = () => {
+    setModalOpen(false);
+  };
 
-  closeModal() {
-    this.setState({ modalIsOpen: false });
-  }
+  const [deleteTask] = useMutationCallback(DELETE_TASK_IN_TODO_LIST);
+  const [createTask] = useMutationCallback(CREATE_TASK);
+  const [updateTask] = useMutationCallback(UPDATE_TASK);
+  const [updateTodoList] = useMutationCallback(UPDATE_TODO_LIST);
+  const [addTagToTodoList] = useMutationCallback(ADD_TAG_TO_TODO_LIST);
+  const [createAndAddTagToTodoList] = useMutationCallback(
+    CREATE_AND_ADD_TAG_TO_TODO_LIST
+  );
+  const [removeTagFromTodoList] = useMutationCallback(
+    REMOVE_TAG_FROM_TODO_LIST
+  );
+  const [addTagToTask] = useMutationCallback(ADD_TAG_TO_TASK);
+  const [createAndAddTagToTask] = useMutationCallback(
+    CREATE_AND_ADD_TAG_TO_TASK
+  );
+  const [removeTagFromTask] = useMutationCallback(REMOVE_TAG_FROM_TASK);
 
-  addTaskInputOnChange(e) {
-    console.log("aaaa");
-    this.setState({
-      addTaskInputText: e.target.value
-    });
+  return (
+    <React.Fragment>
+      <TodoList
+        todoList={props.todoList}
+        onTodoListEdit={openModal}
+        onTodoListDelete={props.onDelete}
+        onTaskUpdate={(id, updateInfo) => {
+          updateTask({ taskID: id, ...updateInfo });
+        }}
+        onTaskDescriptionClicked={openModal}
+        onTaskDelete={(id, taskID) =>
+          deleteTask({ todoListID: id, taskID: taskID })
+        }
+      ></TodoList>
 
-    if (e.target.value != null && e.target.value.length > 0) {
-      this.openModal();
-    }
-  }
-
-  render() {
-    return (
-      <React.Fragment>
-        <TodoList
-          id={this.props.id}
-          title={this.props.title}
-          editClicked={this.openModal}
-          infoClicked={this.toggleTaskDetails}
-          crossClicked={this.props.todoListDeleted}
-          tasks={this.props.tasks}
-          tags={this.props.tags}
-          taskChecked={this.props.taskChecked}
-          taskDescriptionClicked={this.taskDescriptionClicked}
-          wrapEllipsis={true}
-          showTaskDetails={this.state.showTaskDetails}
-          deleteClicked={this.props.taskDeleted}
-        ></TodoList>
-
-        <TodoListModal
-          id={this.props.id}
-          isOpen={this.state.modalIsOpen}
-          closeModal={this.closeModal}
-          title={this.props.title}
-          tasks={this.props.tasks}
-          tags={this.props.tags}
-          addTaskInputInitialText={this.state.addTaskInputText}
-          editTitle={this.props.editTitle}
-          editTaskDescription={this.props.editTaskDescription}
-          taskDeleted={this.props.taskDeleted}
-          addTask={this.props.addTask}
-          taskChecked={this.props.taskChecked}
-          todoListDeleted={this.props.todoListDeleted}
-        ></TodoListModal>
-      </React.Fragment>
-    );
-  }
+      <TodoListModal
+        todoList={props.todoList}
+        isOpen={modalOpen}
+        onModalClose={closeModal}
+        allTags={props.allTags}
+        /* */
+        onTodoListDelete={props.onDelete}
+        onTodoListUpdate={(id, updateInfo) => {
+          updateTodoList({ todoListID: id, ...updateInfo });
+        }}
+        onTodoListTagToggle={(id, tag, selected) => {
+          selected
+            ? removeTagFromTodoList({ todoListID: id, tagID: tag.id })
+            : addTagToTodoList({ todoListID: id, tagID: tag.id });
+        }}
+        onTodoListTagAdd={(id, tag) => {
+          createAndAddTagToTodoList({
+            todoListID: id,
+            tagTitle: tag.title,
+            tagColor: "color"
+          });
+        }}
+        onTaskDelete={(id, taskID) =>
+          deleteTask({ todoListID: id, taskID: taskID })
+        }
+        onTaskUpdate={(id, updateInfo) => {
+          updateTask({ taskID: id, ...updateInfo });
+        }}
+        onTaskTagToggle={(id, tag, selected) => {
+          selected
+            ? removeTagFromTask({ taskID: id, tagID: tag.id })
+            : addTagToTask({ taskID: id, tagID: tag.id });
+        }}
+        onTaskTagAdd={(id, tag) => {
+          createAndAddTagToTask({
+            taskID: id,
+            tagTitle: tag.title,
+            tagColor: "color"
+          });
+        }}
+        onTaskAdd={(id, description) =>
+          createTask({ todoListID: id, description })
+        }
+      ></TodoListModal>
+    </React.Fragment>
+  );
 }
 
 export default TodoListUnit;

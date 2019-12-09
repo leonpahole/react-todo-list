@@ -1,85 +1,67 @@
-import React, { Component, useCallback } from "react";
+import React, { useState } from "react";
 import AwesomeDebouncePromise from "awesome-debounce-promise";
 
-class EditableField extends Component {
-  constructor(props) {
-    super();
+import commonStyles from "../styles/common.module.css";
 
-    this.state = {
-      initialValue: props.value || "",
-      editedValue: props.value || "",
-      editMode: false
-    };
+import { useAsync } from "react-async-hook";
+import useConstant from "use-constant";
 
-    this.editStart = this.editStart.bind(this);
-    this.editStop = this.editStop.bind(this);
-    this.valueChanged = this.valueChanged.bind(this);
-    this.editValue = this.editValue.bind(this);
+function EditableField(props) {
+  const [inputValue, setInputValue] = useState(props.value);
+  const [isEditing, setIsEditing] = useState(false);
 
-    this.debounceHandler = AwesomeDebouncePromise(this.editValue, 500);
+  let wrapperClasses = [commonStyles.editableFieldWrapper];
+
+  if (isEditing) {
+    wrapperClasses.push(commonStyles.editableFieldEditing);
   }
 
-  editStart() {
-    this.setState({
-      editMode: true
-    });
-  }
+  const onValueSet = inputValue => {
+    props.onValueSet && props.onValueSet(inputValue);
+  };
 
-  editStop() {
-    this.setState({
-      editMode: false
-    });
-  }
+  const debouncedValue = useConstant(() =>
+    AwesomeDebouncePromise(
+      onValueSet,
+      props.debounceTime != null ? props.debounceTime : 500
+    )
+  );
 
-  valueChanged(e) {
-    this.setState({
-      editedValue: e.target.value
-    });
+  useAsync(debouncedValue, [inputValue]);
 
-    if (this.props.valueChanged) {
-      this.props.valueChanged(e.target.value);
+  const onValueChange = async e => {
+    setInputValue(e.target.value);
+
+    props.onValueChange && props.onValueChange(e.target.value);
+
+    await debouncedValue(inputValue);
+  };
+
+  const onKeyDown = e => {
+    props.onKeyDown && props.onKeyDown(e);
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+      e.stopPropagation();
+
+      props.onEnterPress && props.onEnterPress();
     }
+  };
 
-    this.debounceHandler();
-  }
-
-  editValue() {
-    if (this.props.editValue) {
-      this.props.editValue(this.state.editedValue);
-    }
-  }
-
-  render() {
-    let borderColor = "#DCDCDC";
-
-    if (this.state.editMode === true) {
-      borderColor = "black";
-    }
-    return (
-      <div
-        style={{
-          display: "flex",
-          width: "100%",
-          borderBottom: "1px solid " + borderColor,
-          marginBottom: "2px"
-        }}
-      >
-        <input
-          placeholder={this.props.placeholder}
-          type={this.props.inputType || "text"}
-          value={this.state.editedValue}
-          onChange={this.valueChanged}
-          onFocus={this.editStart}
-          onBlur={this.editStop}
-          style={{
-            border: "none",
-            width: "100%",
-            ...this.props.style
-          }}
-        />
-      </div>
-    );
-  }
+  return (
+    <div className={wrapperClasses.join(" ")}>
+      <input
+        className={commonStyles.editableField}
+        placeholder={props.placeholder}
+        type={props.inputType || "text"}
+        value={inputValue}
+        onChange={onValueChange}
+        onFocus={() => setIsEditing(true)}
+        onBlur={() => setIsEditing(false)}
+        onKeyDown={onKeyDown}
+      />
+    </div>
+  );
 }
 
 export default EditableField;

@@ -1,0 +1,26 @@
+.container {
+  margin: 15px;
+  padding-bottom: 40px;
+  width: 400px;
+  flex: auto;
+  border: 1px solid var(--secondary-color);
+  padding: 20px;
+  border-radius: 0.5rem;
+}
+
+.headerIconRow {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.headerIcon:not(:last-child) {
+  margin-right: 15px;
+}
+
+.headerTitle {
+  margin: unset;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  word-break: break-word;
+}

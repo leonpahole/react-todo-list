@@ -1,0 +1,27 @@
+.modal {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  margin-right: -50%;
+  transform: translate(-50%, -20%);
+  min-width: 600px;
+  background-color: white;
+  border: 1px solid var(--secondary-color);
+  padding: 30px;
+  border-radius: 0.5rem;
+}
+
+.iconWrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.icon:not(:last-child) {
+  margin-right: 15px;
+}
+
+.editableTaskListWrapper {
+  min-height: 250px;
+}

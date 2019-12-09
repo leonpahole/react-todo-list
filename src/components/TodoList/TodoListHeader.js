@@ -1,57 +1,43 @@
-import React, { Component } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEdit,
   faInfoCircle,
-  faTimes,
   faTrash
 } from "@fortawesome/free-solid-svg-icons";
 
-class TodoListHeader extends Component {
-  render() {
-    return (
-      <React.Fragment>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end"
-          }}
-        >
-          <div>
-            <FontAwesomeIcon
-              style={{ marginRight: "15px", cursor: "pointer" }}
-              onClick={this.props.editClicked}
-              icon={faEdit}
-            />
-            <FontAwesomeIcon
-              style={{ marginRight: "15px", cursor: "pointer" }}
-              onClick={this.props.infoClicked}
-              icon={faInfoCircle}
-            />
-            <FontAwesomeIcon
-              style={{ cursor: "pointer" }}
-              onClick={this.props.crossClicked}
-              icon={faTrash}
-            />
-          </div>
-        </div>
-        <div>
-          <h2
-            onClick={this.props.editClicked}
-            style={{
-              margin: "unset",
-              marginTop: "10px",
-              marginBottom: "15px",
-              cursor: "pointer",
-              wordBreak: "break-word"
-            }}
-          >
-            {this.props.title}
-          </h2>
-        </div>
-      </React.Fragment>
-    );
-  }
+import todoListStyles from "../../styles/todo-list.module.css";
+import commonStyles from "../../styles/common.module.css";
+
+function TodoListHeader(props) {
+  const iconClasses = [commonStyles.clickable, todoListStyles.headerIcon];
+
+  return (
+    <React.Fragment>
+      <div className={todoListStyles.headerIconRow}>
+        <FontAwesomeIcon
+          className={iconClasses.join(" ")}
+          onClick={props.onEdit}
+          icon={faEdit}
+        />
+        <FontAwesomeIcon
+          className={iconClasses.join(" ")}
+          onClick={props.onMoreInfo}
+          icon={faInfoCircle}
+        />
+        <FontAwesomeIcon
+          className={iconClasses.join(" ")}
+          onClick={props.onDelete}
+          icon={faTrash}
+        />
+      </div>
+      <div>
+        <h2 onClick={props.onEdit} className={todoListStyles.headerTitle}>
+          {props.title}
+        </h2>
+      </div>
+    </React.Fragment>
+  );
 }
 
 export default TodoListHeader;

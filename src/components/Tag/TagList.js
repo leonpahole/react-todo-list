@@ -1,24 +1,31 @@
-import React, { Component } from "react";
+import React from "react";
+
 import Tag from "./Tag";
 
-class TagList extends Component {
-  render() {
-    if (this.props.tags == null || this.props.tags.length === 0) {
-      return null;
-    }
+import tagStyles from "../../styles/tags.module.css";
 
-    return (
-      <div style={this.props.style || {}}>
-        {this.props.tags.map((tag, key) => (
-          <Tag
-            key={key}
-            style={{ marginRight: "10px", ...this.props.tagStyle }}
-            title={tag.title}
-          ></Tag>
-        ))}
-      </div>
-    );
+function TagList(props) {
+  if (props.tags == null || props.tags.length === 0) {
+    return null;
   }
+
+  let classes = [];
+
+  if (props.className) {
+    classes.push(props.className);
+  }
+
+  return (
+    <div className={classes} onClick={props.onClick}>
+      {props.tags.map(tag => (
+        <Tag
+          key={tag.id}
+          classes={[tagStyles.separatedTag, tagStyles.tagMarginWrap].join(" ")}
+          title={tag.title}
+        ></Tag>
+      ))}
+    </div>
+  );
 }
 
 export default TagList;

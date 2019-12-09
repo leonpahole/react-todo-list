@@ -1,0 +1,50 @@
+.clickable {
+  cursor: pointer;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.editableFieldWrapper {
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid var(--secondary-color);
+}
+
+.editableFieldEditing {
+  border-color: var(--primary-color) !important;
+}
+
+.editableField {
+  border: none;
+  width: 100%;
+}
+
+.editableTagsWrapper {
+  display: flex;
+  align-items: flex-top;
+  justify-content: space-between;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.editableTagList {
+  width: 550px;
+}
+
+.editableFieldWithButtonWrapper {
+  display: flex;
+}
+
+.editableTaskIconButton {
+  border: none;
+  cursor: pointer;
+  background-color: white;
+}
+
+.overflowEllipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

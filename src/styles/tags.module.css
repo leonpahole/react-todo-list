@@ -1,0 +1,17 @@
+.tag {
+  color: var(--primary-color);
+  border: 1px solid;
+  border-color: var(--secondary-color);
+  padding: 5px;
+  display: inline-block;
+  font-weight: bold;
+  font-size: 11pt;
+}
+
+.separatedTag:not(:last-child) {
+  margin-right: 15px;
+}
+
+.tagMarginWrap {
+  margin-bottom: 10px;
+}
